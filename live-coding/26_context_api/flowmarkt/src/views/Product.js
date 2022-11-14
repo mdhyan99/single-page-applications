@@ -1,27 +1,26 @@
+import { useEffect, useState, useContext } from "react";
+
 import "./Product.css"
 
-import {Container, Row, Col, Button} from "react-bootstrap"
-import {useParams} from "react-router-dom"
-import {useEffect} from "react"
+import { Container, Row, Col, Button } from "react-bootstrap"
+import { useParams } from "react-router-dom"
 
-export default function Product({dispatch, product = {}, productsInBasket}) {
+import { ProductsContext } from "../context/Products";
 
-    /**
-     * Unsere View Product erreichen wir, wenn wir mit einem Parameter. Diesen haben wir
-     * product_id genannt (bei Route innerhalb des path ein Doppelpunkt plus name -> :product_id)
-     * mit dem Hook useParams können wir auf diese Zugreifen.
-     */
+export default function Product() {
+    const { productsInBasket, toggleProductInBasket, findProduct } = useContext(ProductsContext);
+    const { product_id } = useParams();
+    const [product, setProduct] = useState({});
+    const inBasket = productsInBasket.includes(product.id);
 
-    const {product_id} = useParams()
+    useEffect(() => {
+        setProduct(findProduct(product_id));
+    }, [product_id, findProduct]);
 
-    /**
-     * Jedes mal wenn product_id sich ändert löst useEffect den dispatch aus, um die dazugehörigen
-     * Produktdaten im state zu speichern. die id aus den parametern wird als payload übergeben
-     */
-
-    useEffect(()=>{
-        dispatch({type: "selectProduct", payload: product_id})
-    },[product_id])
+    const clickHandler = (event) => {
+        event.preventDefault();
+        toggleProductInBasket(product.id);
+    }
 
     return (
         <Container className="site-content">
@@ -29,7 +28,7 @@ export default function Product({dispatch, product = {}, productsInBasket}) {
                 <Col lg="8">
                     <Row>
                         <div className="product-img">
-                            <img src={product.img}/>
+                            <img src={product.img} />
                         </div>
                     </Row>
                     <div className="contentbox">
@@ -52,8 +51,8 @@ export default function Product({dispatch, product = {}, productsInBasket}) {
                     {/** Der Button nutzt die dispatch Funktion aus den props um den Artikel
                      * zum Warenkorb hinzuzufügen.
                      */}
-                    <Button onClick={()=> dispatch({type: "addToBasket", payload: product.id})}>
-                        {productsInBasket.includes(product.id) ? "Aus Warenkorb entfernen" : "Zu Warenkorb hinzufügen"}
+                    <Button onClick={clickHandler}>
+                        {inBasket ? "Aus Warenkorb entfernen" : "Zu Warenkorb hinzufügen"}
                     </Button>
                 </Col>
             </Row>
