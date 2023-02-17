@@ -9,7 +9,7 @@ export default function() {
     const [albums, setAlbums] = useState([])
 
     useEffect(()=>{
-        fetch(`http://127.0.0.1:4000/albums`)
+        fetch(`/api/albums`)
             .then(response => response.json())
             .then(data => setAlbums(data))
     },[])
@@ -19,7 +19,7 @@ export default function() {
             name: album,
             photos: []
         }
-        fetch("http://127.0.0.1:4000/albums", {
+        fetch("/api/albums", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -35,7 +35,7 @@ export default function() {
     return (
         <Container>
             <Row>
-                {albums.map((a, i) => 
+                {albums.map((a, i) =>
                     <AlbumIcon key={i} album={a}/>
                 )}
             </Row>

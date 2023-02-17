@@ -12,13 +12,13 @@ export default function() {
     const [editMode, setEditMode] = useState(false)
 
     useEffect(()=>{
-        fetch(`http://127.0.0.1:4000/albums/${albumId}`)
+        fetch(`/api/albums/${albumId}`)
             .then(res => res.json())
             .then(data => setAlbum(data))
     }, [albumId])
 
     useEffect(()=>{
-        album.photos && fetch(`http://127.0.0.1:4000/photos`)
+        album.photos && fetch(`/api/photos`)
             .then(response => response.json())
             .then(data => setAlbumPhotos(data.filter(d => album.photos.includes(d.id))))
     },[album])
@@ -28,7 +28,7 @@ export default function() {
     }
 
     const clickFunction = (albumName) => {
-        fetch(`http://127.0.0.1:4000/albums/${albumId}`, {
+        fetch(`/api/albums/${albumId}`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json'
@@ -45,13 +45,13 @@ export default function() {
             <h2 className="album-title">{album.name}</h2>
             <Row>
                 <Col className="mb-2">
-                {editMode ? 
+                    {editMode ?
                 <AlbumNameForm clickFunction={clickFunction} albumName={album.name}/> :
                 <Button onClick={clickHandler}>Name ändern</Button>}
                 </Col>
             </Row>
             <Row>
-                {albumPhotos.map((p,i)=> 
+                {albumPhotos.map((p, i) =>
                     <PhotoPreview key={i} photo={p} />
                 )}
                 <PhotoPreview photo={{id:1}} />
